@@ -10,7 +10,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.0.120:3306/xc_content?characterEncoding=utf-8
     username: root
-    password: Lwc1436756712
+    password: root
 
 ## 日志文件配置路径
 logging:

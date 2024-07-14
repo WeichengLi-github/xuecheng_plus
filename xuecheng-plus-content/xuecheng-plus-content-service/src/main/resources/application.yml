@@ -5,16 +5,17 @@ server:
 ## 微服务配置
 spring:
   application:
-    name: content-service
+    name: content-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.0.120:3306/xc_content
+    url: jdbc:mysql://192.168.0.120:3306/xc_content?characterEncoding=utf-8
     username: root
-    password: Lwc1436756712
+    password: root
+
 
 ## 日志文件配置路径
-#logging:
-#  config: classpath:log4j2-dev.xml
+logging:
+  config: classpath:log4j2-dev.xml
 
 ## swagger 文档配置
 swagger:
