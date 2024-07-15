@@ -1,5 +1,6 @@
 package com.xuecheng.base.model;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +28,19 @@ public class PageResult<T> implements Serializable {
     private long page;
     // 每页记录数
     private long pageSize;
+
+    /**
+     * 提供分页结果直接向最终结果的构造函数
+     *
+     * @param page
+     * @return
+     */
+    public static <T> PageResult<T> toPageResult(IPage<T> page) {
+        return PageResult.<T>builder()
+                .items(page.getRecords())
+                .counts(page.getTotal())
+                .page(page.getCurrent())
+                .pageSize(page.getPages()).build();
+    }
+    //TODO 补充其他分页结果参数的构造函数
 }

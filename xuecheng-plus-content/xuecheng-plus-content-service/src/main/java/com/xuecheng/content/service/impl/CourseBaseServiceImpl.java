@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  * 课程基本信息 服务实现类
@@ -20,10 +22,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseBase> implements CourseBaseService {
-
+    @Resource
+    private CourseBaseMapper courseBaseMapper;
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamDto queryCourseParamDto) {
-        //TODO 名称，审核状态，发布状态查询
-        return null;
+        return PageResult.toPageResult(courseBaseMapper.selectPageByCondition(pageParams, queryCourseParamDto));
     }
 }
