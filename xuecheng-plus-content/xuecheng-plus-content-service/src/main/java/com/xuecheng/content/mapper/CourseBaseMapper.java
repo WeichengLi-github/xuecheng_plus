@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Objects;
+
 /**
  * <p>
  * 课程基本信息 Mapper 接口
@@ -21,15 +23,20 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CourseBaseMapper extends BaseMapper<CourseBase> {
     /**
      * 条件查询课程基本信息
+     *
      * @param pageParams
      * @param queryCourseParamDto
      * @return
      */
     default IPage<CourseBase> selectPageByCondition(PageParams pageParams, QueryCourseParamDto queryCourseParamDto) {
-        return selectPage(new Page<CourseBase>(pageParams.getPageNo(), pageParams.getPageSize()),new LambdaQueryWrapper<CourseBase>()
-                .like(StringUtils.isNotBlank(queryCourseParamDto.getCourseName()),CourseBase::getName,queryCourseParamDto.getCourseName())
-                .eq(StringUtils.isNotBlank(queryCourseParamDto.getAuditStatus()),CourseBase::getAuditStatus,queryCourseParamDto.getAuditStatus())
-                .eq(StringUtils.isNotBlank(queryCourseParamDto.getPublishStatus()),CourseBase::getStatus,queryCourseParamDto.getPublishStatus()));
+        LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
+        if (Objects.nonNull(queryCourseParamDto)) {
+            queryWrapper
+                    .like(StringUtils.isNotBlank(queryCourseParamDto.getCourseName()), CourseBase::getName, queryCourseParamDto.getCourseName())
+                    .eq(StringUtils.isNotBlank(queryCourseParamDto.getAuditStatus()), CourseBase::getAuditStatus, queryCourseParamDto.getAuditStatus())
+                    .eq(StringUtils.isNotBlank(queryCourseParamDto.getPublishStatus()), CourseBase::getStatus, queryCourseParamDto.getPublishStatus());
+        }
+        return selectPage(new Page<>(pageParams.getPageNo(), pageParams.getPageSize()), queryWrapper);
     }
 
 }
