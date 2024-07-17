@@ -1,7 +1,7 @@
 ### 测试分页查询课程基本信息
-POST {{content_host}}}/content/course/list
+POST {{content_host}}/content/course/list
 Content-Type: application/json
 
 {
-
+  "auditstatus": "202003"
 }

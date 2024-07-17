@@ -40,7 +40,7 @@ public class PageResult<T> implements Serializable {
                 .items(page.getRecords())
                 .counts(page.getTotal())
                 .page(page.getCurrent())
-                .pageSize(page.getPages()).build();
+                .pageSize(page.getSize()).build();
     }
     //TODO 补充其他分页结果参数的构造函数
 }
