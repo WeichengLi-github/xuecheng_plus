@@ -24,3 +24,7 @@ swagger:
   base-package: com.xuecheng.content
   enabled: true
   version: 1.0.0
+content:
+  category:
+    service:
+      strategy: database
