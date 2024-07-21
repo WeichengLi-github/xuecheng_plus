@@ -18,12 +18,12 @@ public class AppServiceStrategyConfig {
 
     @Bean
     @Conditional(JavaStrategyCondition.class)
+    @Primary
     public CourseCategoryService courseCategoryServiceJava() {
         return new CourseCategoryServiceJavaImpl();
     }
 
     @Bean
-    @Primary
     public CourseCategoryService courseCategoryServiceDatabase() {
         return new CourseCategoryServiceDatabaseImpl();
     }
@@ -32,7 +32,7 @@ public class AppServiceStrategyConfig {
 class JavaStrategyCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String strategy = context.getEnvironment().getProperty("course.category.service.strategy");
+        String strategy = context.getEnvironment().getProperty("content.category.service.strategy");
         return "java".equalsIgnoreCase(strategy);
     }
 }

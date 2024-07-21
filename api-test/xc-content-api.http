@@ -5,3 +5,7 @@ Content-Type: application/json
 {
   "auditstatus": "202003"
 }
+
+### 测试课程分类
+GET {{content_host}}/content/course-category/tree-nodes?id=1
+Content-Type: application/json

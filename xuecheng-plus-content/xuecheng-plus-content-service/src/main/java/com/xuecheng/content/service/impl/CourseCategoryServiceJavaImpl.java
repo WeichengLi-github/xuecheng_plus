@@ -24,7 +24,6 @@ public class CourseCategoryServiceJavaImpl extends CourseCategoryServiceImpl {
     /**
      * 查询树形结构 （不论sql返回结果是否是层级结构，都可以）
      * 手动加入根节点的子节点，并为其他所有节点加入其父节点
-     *
      * 直接遍历也可以，找到根节点，忽略即可，最后直接拿出根节点
      * @param id
      * @return
