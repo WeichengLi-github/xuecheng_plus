@@ -9,3 +9,6 @@ Content-Type: application/json
 ### 测试课程分类
 GET {{content_host}}/content/course-category/tree-nodes?id=1
 Content-Type: application/json
+### 测试分组校验
+POST http://localhost:53040/content/course
+Content-Type: application/json

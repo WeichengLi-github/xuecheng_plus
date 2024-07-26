@@ -7,11 +7,15 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 
+import com.xuecheng.base.exception.ValidationGroups;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
 
 /**
  * <p>
@@ -33,6 +37,8 @@ public class CourseBase implements Serializable {
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
+    @Null(message = "订单id需为空", groups = ValidationGroups.Insert.class)
+    @NotEmpty(message = "订单id不能为空", groups = ValidationGroups.Update.class)
     private Long id;
 
     /**
