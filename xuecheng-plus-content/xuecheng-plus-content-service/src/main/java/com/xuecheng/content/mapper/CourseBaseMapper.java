@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.model.PageParams;
+import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Objects;
 
@@ -38,5 +40,7 @@ public interface CourseBaseMapper extends BaseMapper<CourseBase> {
         }
         return selectPage(new Page<>(pageParams.getPageNo(), pageParams.getPageSize()), queryWrapper);
     }
+
+    CourseBaseInfoDto selectCourseBaseInfoDtoById(@Param("courseId") Long courseId);
 
 }
