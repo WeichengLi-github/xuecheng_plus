@@ -23,19 +23,43 @@
         <result column="audit_status" property="auditStatus" />
         <result column="status" property="status" />
     </resultMap>
-    <resultMap id="CourseBaseInfoDtoMap" type="com.xuecheng.content.model.dto.CourseBaseInfoDto">
-        <id column="id" property="id"/>
-        <result column=""
-    </resultMap>
-
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, company_id, company_name, name, users, tags, mt, st, grade, teachmode, description, pic, create_date, change_date, create_people, change_people, audit_status, status
     </sql>
-    <select id="selectCourseBaseInfoDtoById" resultMap="CourseBaseInfoDtoMap">
-        select *
-from
-
+    <select id="selectCourseBaseInfoDtoById" resultType="com.xuecheng.content.model.dto.CourseBaseInfoDto">
+        select
+            cb.id,
+            cb.name,
+            cb.users,
+            cb.tags,
+            cb.mt,
+            cb.st,
+            mt.name as mtName,
+            st.name as stName,
+            cb.grade,
+            cb.teachmode,
+            cb.description,
+            cb.pic,
+            cb.create_date,
+            cb.change_date,
+            cb.create_people,
+            cb.change_people,
+            cb.audit_status,
+            cb.status,
+            cm.charge,
+            cm.price,
+            cm.original_price,
+            cm.valid_days,
+            cm.qq,
+            cm.phone,
+            cm.wechat
+        from
+            xc_content.course_base cb
+                left join xc_content.course_market cm on cb.id = cm.id
+                left join xc_content.course_category mt on cb.mt = mt.id
+                left join xc_content.course_category st on cb.st = st.id
+        where
+            cb.id = #{courseId}
     </select>
-
 </mapper>

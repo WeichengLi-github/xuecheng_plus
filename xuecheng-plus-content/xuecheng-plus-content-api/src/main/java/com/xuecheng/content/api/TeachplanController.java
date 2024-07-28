@@ -26,6 +26,6 @@ public class TeachplanController {
     @ApiOperation("课程计划创建或修改")
     @PostMapping("/teachplan")
     public void saveTeachplan(@RequestBody Teachplan teachplanDto) {
-
+        teachplanService.saveTeachplan(teachplanDto);
     }
 }

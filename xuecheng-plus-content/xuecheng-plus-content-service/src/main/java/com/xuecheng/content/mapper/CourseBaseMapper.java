@@ -40,6 +40,12 @@ public interface CourseBaseMapper extends BaseMapper<CourseBase> {
         }
         return selectPage(new Page<>(pageParams.getPageNo(), pageParams.getPageSize()), queryWrapper);
     }
+    default CourseBase selectByCompanyIdAndCourseId(@Param("companyId") Long companyId, @Param("courseId") Long courseId) {
+        LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseBase::getCompanyId, companyId)
+                .eq(CourseBase::getId, courseId);
+        return selectOne(queryWrapper);
+    }
 
     CourseBaseInfoDto selectCourseBaseInfoDtoById(@Param("courseId") Long courseId);
 

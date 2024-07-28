@@ -1,10 +1,8 @@
 package com.xuecheng.content;
 
 import com.xuecheng.XuechengPlusContentServiceApplication;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
 import com.xuecheng.content.service.CourseCategoryService;
-import com.xuecheng.content.service.impl.CourseCategoryServiceDatabaseImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.Test;
