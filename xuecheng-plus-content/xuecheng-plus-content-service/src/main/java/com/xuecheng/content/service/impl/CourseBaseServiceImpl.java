@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.*;
 import com.xuecheng.content.model.convert.ContentConvert;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamDto;
 import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseService;
@@ -42,6 +40,10 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     private CourseBaseMapper courseBaseMapper;
     @Resource
     private CourseMarketMapper courseMarketMapper;
+    @Resource
+    private CourseTeacherMapper courseTeacherMapper;
+    @Resource
+    private TeachplanMapper teachplanMapper;
     @Resource
     private CourseCategoryMapper courseCategoryMapper;
     @Resource
@@ -127,6 +129,19 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
             XueChengPlusException.cast("课程保存或修改失败！");
         }
         return getCourseInfo(courseId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delectCourse(Long companyId, Long courseId) {
+        //TODO 课程计划绑定的媒资信息是否需要删除
+        Boolean deleteCourseBase = courseBaseMapper.deleteCourseBase(companyId, courseId);
+        if (!deleteCourseBase) {
+            XueChengPlusException.cast("只允许删除本机构的课程！");
+        }
+        courseMarketMapper.deleteById(courseId);
+        teachplanMapper.deleteCourseTeachPlan(courseId);
+        courseTeacherMapper.deleteCourseTeacher(courseId);
     }
 
     private boolean saveCourseMarket(CourseMarket courseMarket) {

@@ -46,6 +46,11 @@ public interface CourseBaseMapper extends BaseMapper<CourseBase> {
                 .eq(CourseBase::getId, courseId);
         return selectOne(queryWrapper);
     }
+    default Boolean deleteCourseBase(long companyId,long courseId) {
+        return delete(new LambdaQueryWrapper<CourseBase>()
+                .eq(CourseBase::getId,courseId)
+                .eq(CourseBase::getCompanyId,companyId)) > 0;
+    }
 
     CourseBaseInfoDto selectCourseBaseInfoDtoById(@Param("courseId") Long courseId);
 

@@ -17,4 +17,7 @@ import java.util.List;
 public interface TeachplanService extends IService<Teachplan> {
     List<TeachplanDto> findTeachplanTree(Long courseId);
     void saveTeachplan(Teachplan teachplan);
+    void deleteTeachplan(Long teachplanId);
+    void orderByTeachplan(String moveType, Long teachplanId);
+    void exchangeOrderby(Teachplan teachplan, Teachplan tmp);
 }
