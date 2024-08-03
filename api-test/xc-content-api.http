@@ -13,7 +13,7 @@ Content-Type: application/json
 POST {{content_host}}/content/course
 Content-Type: application/json
 ### 根据课程id查询课程基本信息
-GET {{content_host}}/content/course/22
+GET {{gateway_host}}/content/course/22
 Content-Type: application/json
 ### 修改课程
 PUT {{content_host}}/content/course/
@@ -54,5 +54,5 @@ Content-Type: application/json
 }
 
 ### 根据课程id查询课程计划
-GET {{content_host}}/content/teachplan/22/tree-nodes
+GET {{gateway_host}}/content/teachplan/22/tree-nodes
 Content-Type: application/json

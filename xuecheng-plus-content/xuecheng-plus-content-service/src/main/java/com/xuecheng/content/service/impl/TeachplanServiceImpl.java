@@ -28,11 +28,13 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan> implements TeachplanService {
-    public static final TeachplanService TEACHPLAN_SERVICE = SpringBeanUtil.getBean(TeachplanService.class);
+//    public static final TeachplanService TEACHPLAN_SERVICE = SpringBeanUtil.getBean(TeachplanService.class);
     @Autowired
     private TeachplanMapper teachplanMapper;
     @Resource
     private TeachplanMediaMapper teachplanMediaMapper;
+    @Resource(name = "teachplanServiceImpl")
+    private TeachplanService TEACHPLAN_SERVICE ;
 
     @Override
     public List<TeachplanDto> findTeachplanTree(Long courseId) {
@@ -70,6 +72,7 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
         // 1:上移 0：下移
         Teachplan moveTeachplan = teachplanMapper.selectOrderUpOrDown(moveType.equals("moveup") ? 1 : 0, teachplan);
         TEACHPLAN_SERVICE.exchangeOrderby(teachplan,moveTeachplan);
+        exchangeOrderby(teachplan,moveTeachplan);
     }
 
     /**
