@@ -3,6 +3,7 @@ package com.xuecheng.media.api;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
+import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.MediaFileService;
@@ -41,6 +42,13 @@ public class MediaFilesController {
     public UploadFileResultDto upload(@RequestPart("filedata") MultipartFile upload,
                                       @RequestParam(value = "folder", required = false) String folder,
                                       @RequestParam(value = "objectName", required = false) String objectName) {
+
+
+        UploadFileParamsDto.builder()
+                .filename(upload.getOriginalFilename())
+                .fileSize(upload.getSize())
+                .fileType("001001")
+                .build();
         return null;
     }
 

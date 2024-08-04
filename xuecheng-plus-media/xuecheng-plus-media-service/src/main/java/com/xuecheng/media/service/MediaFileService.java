@@ -1,5 +1,6 @@
 package com.xuecheng.media.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
@@ -16,7 +17,7 @@ import java.util.List;
  * @date 2022/9/10 8:55
  * @version 1.0
  */
-public interface MediaFileService {
+public interface MediaFileService extends IService<MediaFiles>{
 
  /**
   * @description 媒资文件查询方法
@@ -37,5 +38,6 @@ public interface MediaFileService {
   * @param objectName          对象名称
   * @return com.xuecheng.media.model.dto.UploadFileResultDto
   */
- UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] bytes, String folder, String objectName);
+ UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile,String md5Id);
+ MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile, String md5Id);
 }

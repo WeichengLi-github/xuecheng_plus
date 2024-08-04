@@ -1,7 +1,6 @@
 package com.xuecheng.media.model.dto;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @program: xuecheng_plus
@@ -10,6 +9,9 @@ import lombok.ToString;
  * @create: 2024-08-03 23:24
  **/
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @ToString
 public class UploadFileParamsDto {
 
