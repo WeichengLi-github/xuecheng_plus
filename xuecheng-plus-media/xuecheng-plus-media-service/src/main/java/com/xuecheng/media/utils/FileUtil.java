@@ -30,17 +30,17 @@ public class FileUtil {
     public static String getFileMimeType(@NotEmpty(message = "被转换文件名称不能为空！") String fileName) {
         return Optional.ofNullable(ContentInfoUtil.findExtensionMatch(fileName)).map(ContentInfo::getMimeType).orElse("application/octet-stream");
     }
-    public static String getObjectPath(@NotEmpty(message = "文件名称不能为空！") String localFilePath) {
+    public static String getObjectPath(@NotEmpty(message = "文件名称不能为空！") String fileMd5Id) {
         try {
-            return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).concat("/").concat(DigestUtils.md5DigestAsHex(Files.newInputStream(new File(localFilePath).toPath())));
+            return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).concat("/").concat(fileMd5Id);
         } catch (Exception e) {
             log.error("获取文件路径失败！", e);
             throw new MediaException("获取文件路径失败！");
         }
     }
-    public static String getMd5(@NotEmpty(message = "文件名称不能为空！") MultipartFile upload) {
+    public static String getMd5(@NotEmpty(message = "文件名称不能为空！") byte[] fileBytes) {
         try {
-            return DigestUtils.md5DigestAsHex(upload.getInputStream());
+            return DigestUtils.md5DigestAsHex(fileBytes);
         } catch (Exception e) {
             log.error("获取文件MD5失败！", e);
             throw new MediaException("获取文件MD5失败！");

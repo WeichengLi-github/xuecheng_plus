@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 /**
@@ -46,6 +47,9 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
 
         //构建查询条件对象
         LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(!StringUtils.isEmpty(queryMediaParamsDto.getFilename()), MediaFiles::getFilename, queryMediaParamsDto.getFilename());
+        queryWrapper.eq(!StringUtils.isEmpty(queryMediaParamsDto.getFileType()), MediaFiles::getFileType, queryMediaParamsDto.getFileType());
+
 
         //分页对象
         Page<MediaFiles> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
@@ -62,17 +66,18 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
     }
 
     @Override
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile,String md5Id) {
-        MediaFiles fileInfo = super.getById(md5Id);
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] fileBytes) {
+        String md5Id = FileUtil.getMd5(fileBytes);
+        MediaFiles fileInfo = currentProxy.getById(md5Id);
         if (fileInfo != null) {
             return MediaConvert.INSTANCE.poToDto(fileInfo);
         }
-        MediaFiles mediaFiles = currentProxy.addFilesInfoToDb(companyId, uploadFileParamsDto, localFile, md5Id);
+        MediaFiles mediaFiles = currentProxy.addFilesInfoToDb(companyId, uploadFileParamsDto, md5Id);
         //上传文件
         String filename = uploadFileParamsDto.getFilename();
         boolean uploadFile = MinioUtil.uploadFile(bucket_files,
-                FileUtil.getObjectPath(filename),
-                localFile,
+                FileUtil.getObjectPath(md5Id),
+                new ByteArrayInputStream(fileBytes),
                 FileUtil.getFileMimeType(filename));
         if (!uploadFile) {
             throw new MediaException("上传文件失败！");
@@ -81,13 +86,13 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
     }
 
     @Transactional
-    public MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile, String md5Id) {
+    public MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String md5Id) {
 
         MediaFiles mediaFiles = MediaConvert.INSTANCE.dtoToPo(uploadFileParamsDto);
         mediaFiles.setId(md5Id);
         mediaFiles.setCompanyId(companyId);
         mediaFiles.setBucket(bucket_files);
-        String objectPath = FileUtil.getObjectPath(uploadFileParamsDto.getFilename());
+        String objectPath = FileUtil.getObjectPath(md5Id);
         mediaFiles.setFilePath(objectPath);
         mediaFiles.setFileId(md5Id);
         mediaFiles.setUrl("/" + bucket_files + "/" + objectPath);

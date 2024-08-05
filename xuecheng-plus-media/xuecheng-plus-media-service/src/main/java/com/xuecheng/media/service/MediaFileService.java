@@ -38,6 +38,6 @@ public interface MediaFileService extends IService<MediaFiles>{
   * @param objectName          对象名称
   * @return com.xuecheng.media.model.dto.UploadFileResultDto
   */
- UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile,String md5Id);
- MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFile, String md5Id);
+ UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] fileBytes);
+ MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String md5Id);
 }
