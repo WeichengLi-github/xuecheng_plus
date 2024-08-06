@@ -39,5 +39,5 @@ public interface MediaFileService extends IService<MediaFiles>{
   * @return com.xuecheng.media.model.dto.UploadFileResultDto
   */
  UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] fileBytes);
- MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String md5Id);
+ MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String objectName,String md5Id,String bucket);
 }

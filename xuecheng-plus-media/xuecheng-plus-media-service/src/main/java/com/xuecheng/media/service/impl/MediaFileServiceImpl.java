@@ -72,7 +72,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         if (fileInfo != null) {
             return MediaConvert.INSTANCE.poToDto(fileInfo);
         }
-        MediaFiles mediaFiles = currentProxy.addFilesInfoToDb(companyId, uploadFileParamsDto, md5Id);
+        MediaFiles mediaFiles = currentProxy.addFilesInfoToDb(companyId, uploadFileParamsDto,FileUtil.getObjectPath(md5Id), md5Id,bucket_files);
         //上传文件
         String filename = uploadFileParamsDto.getFilename();
         boolean uploadFile = MinioUtil.uploadFile(bucket_files,
@@ -86,16 +86,15 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
     }
 
     @Transactional
-    public MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String md5Id) {
+    public MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String objectName,String md5Id,String bucket) {
 
         MediaFiles mediaFiles = MediaConvert.INSTANCE.dtoToPo(uploadFileParamsDto);
         mediaFiles.setId(md5Id);
         mediaFiles.setCompanyId(companyId);
-        mediaFiles.setBucket(bucket_files);
-        String objectPath = FileUtil.getObjectPath(md5Id);
-        mediaFiles.setFilePath(objectPath);
+        mediaFiles.setBucket(bucket);
+        mediaFiles.setFilePath(objectName);
         mediaFiles.setFileId(md5Id);
-        mediaFiles.setUrl("/" + bucket_files + "/" + objectPath);
+        mediaFiles.setUrl("/" + bucket_files + "/" + objectName);
         mediaFiles.setAuditStatus("002003");
         boolean save = super.save(mediaFiles);
         if (!save) {
