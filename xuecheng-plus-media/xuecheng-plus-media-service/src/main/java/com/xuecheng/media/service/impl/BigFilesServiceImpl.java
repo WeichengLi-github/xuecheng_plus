@@ -27,7 +27,7 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 @Service
 public class BigFilesServiceImpl implements BigFilesService {
-    @Value("${minio.video.files}")
+    @Value("${minio.bucket.videofiles}")
     private String video_files;
     @Resource
     private MediaFileService mediaFileService;

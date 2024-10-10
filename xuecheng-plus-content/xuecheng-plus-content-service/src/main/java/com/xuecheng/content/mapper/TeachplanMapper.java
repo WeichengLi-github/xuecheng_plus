@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -19,12 +20,13 @@ import java.util.List;
  */
 @Mapper
 public interface TeachplanMapper extends BaseMapper<Teachplan> {
-    //todo 解决空指针
     default long selectMaxOrder(Long courseId, Long parentId) {
-        return selectOne(new LambdaQueryWrapper<Teachplan>()
-                .eq(Teachplan::getCourseId, courseId)
-                .eq(Teachplan::getParentid, parentId)
-                .orderByDesc(Teachplan::getOrderby)).getOrderby();
+        return Optional.ofNullable(selectOne(new LambdaQueryWrapper<Teachplan>()
+                        .eq(Teachplan::getCourseId, courseId)
+                        .eq(Teachplan::getParentid, parentId)
+                        .orderByDesc(Teachplan::getOrderby)))
+                .map(Teachplan::getOrderby)
+                .orElse(0);
     }
     default long selectCountTeachplanByParentId(long teachplanId) {
         return selectCount(new LambdaQueryWrapper<Teachplan>()

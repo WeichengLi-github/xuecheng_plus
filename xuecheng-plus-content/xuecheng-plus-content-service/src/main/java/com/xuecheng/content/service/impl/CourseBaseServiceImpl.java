@@ -64,7 +64,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         CourseMarket courseMarket = ContentConvert.INSTANCE.fromAddCourseDto(addCourseDto);
         courseMarket.setId(courseId);
         boolean marketInsert = saveCourseMarket(courseMarket);
-        if (baseInsert <= 0 || marketInsert) {
+        if (baseInsert <= 0 || !marketInsert) {
             XueChengPlusException.cast("新增课程基本信息失败");
         }
         // 3. 返回添加的课程信息
