@@ -106,7 +106,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         }
         try {
             // 缓冲区
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 1024 * 5];
             // 写入流，向临时文件写入
             try (RandomAccessFile raf_write = new RandomAccessFile(mergeFile, "rw")) {
                 // 遍历分块文件数组

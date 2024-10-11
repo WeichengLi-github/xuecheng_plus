@@ -21,7 +21,7 @@ import java.util.Optional;
 @Mapper
 public interface TeachplanMapper extends BaseMapper<Teachplan> {
     default long selectMaxOrder(Long courseId, Long parentId) {
-        return Optional.ofNullable(selectOne(new LambdaQueryWrapper<Teachplan>()
+        return Optional.ofNullable(getOnly(new LambdaQueryWrapper<Teachplan>()
                         .eq(Teachplan::getCourseId, courseId)
                         .eq(Teachplan::getParentid, parentId)
                         .orderByDesc(Teachplan::getOrderby)))
@@ -35,7 +35,7 @@ public interface TeachplanMapper extends BaseMapper<Teachplan> {
 
     //todo 解决空指针
     default Teachplan selectOrderUpOrDown(int direction, Teachplan teachplan) {
-        return selectOne(new LambdaQueryWrapper<Teachplan>()
+        return getOnly(new LambdaQueryWrapper<Teachplan>()
                 .eq(Teachplan::getCourseId, teachplan.getCourseId())
                 .eq(Teachplan::getParentid, teachplan.getParentid())
                 .lt(direction == 1,Teachplan::getOrderby, teachplan.getOrderby())
@@ -49,4 +49,9 @@ public interface TeachplanMapper extends BaseMapper<Teachplan> {
                 .eq(Teachplan::getCourseId, courseId)) > 0;
     }
     List<TeachplanDto> selectTreeNodes(Long courseId);
+    //todo 可以考虑封装MybaitsPlus的BaseMapper方法，放入其中，适配器模式
+    default Teachplan getOnly(LambdaQueryWrapper<Teachplan> wrapper) {
+        wrapper.last("limit 1");
+        return this.selectOne(wrapper);
+    }
 }

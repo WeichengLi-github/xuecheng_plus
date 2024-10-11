@@ -68,11 +68,13 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     @Override
     public void orderByTeachplan(String moveType, Long teachplanId) {
         //todo 处理空指针
+        //直接使用接口调用可能存在课程不存在的情况，前端使用的话不存在，后期补齐后端判断
         Teachplan teachplan = teachplanMapper.selectById(teachplanId);
         // 1:上移 0：下移
         Teachplan moveTeachplan = teachplanMapper.selectOrderUpOrDown(moveType.equals("moveup") ? 1 : 0, teachplan);
         TEACHPLAN_SERVICE.exchangeOrderby(teachplan,moveTeachplan);
-        exchangeOrderby(teachplan,moveTeachplan);
+        //注释原因：采用代理的方式，因为存在多个sql，防止事务失效
+//        exchangeOrderby(teachplan,moveTeachplan);
     }
 
     /**

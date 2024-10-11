@@ -94,7 +94,11 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         mediaFiles.setBucket(bucket);
         mediaFiles.setFilePath(objectName);
         mediaFiles.setFileId(md5Id);
-        mediaFiles.setUrl("/" + bucket_files + "/" + objectName);
+        String contentType = ContentInfoUtil.findExtensionMatch(objectName).getMimeType();
+        //todo 观察是否正确，扩展数据拿到的数据是否可以用于判断
+        if (contentType.contains("mp4") || contentType.contains("image")) {
+            mediaFiles.setUrl("/" + bucket_files + "/" + objectName);
+        }
         mediaFiles.setAuditStatus("002003");
         boolean save = super.save(mediaFiles);
         if (!save) {
@@ -102,5 +106,15 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         }
         return mediaFiles;
     }
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        if (mediaFiles == null || StringUtils.isEmpty(mediaFiles.getUrl())) {
+            MediaException.cast("视频还没有转码处理");
+        }
+        return mediaFiles;
+    }
+
 }
 

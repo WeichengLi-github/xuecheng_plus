@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class BigFileChunkTest {
+
+    public static final int CHUNK_SIZE = 1024 * 1024 * 5;
+    public static final String DIST_FILE = "D:\\document\\baiduNet\\test\\";
+    public static final String SOURCE_FILE = "D:\\document\\baiduNet\\7月27日.mp4";
+
     @SneakyThrows
     @Test
     public void testChunk() {
@@ -64,14 +69,14 @@ public class BigFileChunkTest {
         //统计已读取的文件长度
         long bytesRead = 0;
         //读取源文件
-        File sourceFile = new File("");
+        File sourceFile = new File(SOURCE_FILE);
         //源文件总长度
         long totalLength = sourceFile.length();
         try (RandomAccessFile inputStream = new RandomAccessFile(sourceFile, "r")) {
             //遍历
             while (totalLength - bytesRead > 0) {
-                File file = new File("" + count++);
-                byte[] buffer = new byte[1024];
+                File file = new File(DIST_FILE + count++);
+                byte[] buffer = new byte[CHUNK_SIZE];
                 if (file.createNewFile()) {
                     int len = (int) Math.min(totalLength - bytesRead, buffer.length);
                     inputStream.read(buffer, 0, len);
@@ -97,14 +102,12 @@ public class BigFileChunkTest {
     @SneakyThrows
     public void testMerge() {
         //块文件目录
-        File chunkFolder = new File("");
+        File chunkFolder = new File(DIST_FILE);
         //源文件
-        File sourceFile = new File("");
+        File sourceFile = new File(SOURCE_FILE);
         //合并文件
-        File mergeFile = new File("");
-        mergeFile.createNewFile();
-        //用于写文件
-        RandomAccessFile raf_write = new RandomAccessFile(mergeFile, "rw");
+        File mergeFile = new File(DIST_FILE+"merge.mp4");
+
         //缓冲区
         byte[] buffer = new byte[1024];
         //文件名升序排序
@@ -116,6 +119,9 @@ public class BigFileChunkTest {
                     return Integer.compare(Integer.parseInt(f1.getName()), Integer.parseInt(f2.getName()));
                 })
                 .collect(Collectors.toList());
+        mergeFile.createNewFile();
+        //用于写文件
+        RandomAccessFile raf_write = new RandomAccessFile(mergeFile, "rw");
         for (File chunkFile : fileList) {
             RandomAccessFile raf_read = new RandomAccessFile(chunkFile, "r");
             int len;

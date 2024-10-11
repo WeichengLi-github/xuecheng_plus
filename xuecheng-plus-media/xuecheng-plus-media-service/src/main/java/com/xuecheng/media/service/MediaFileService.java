@@ -40,4 +40,11 @@ public interface MediaFileService extends IService<MediaFiles>{
   */
  UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] fileBytes);
  MediaFiles addFilesInfoToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String objectName,String md5Id,String bucket);
+
+ /**
+  * 预览接口
+  * @param mediaId 媒资信息id
+  * @return 媒资文件url
+  */
+ MediaFiles getFileById(String mediaId);
 }
