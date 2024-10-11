@@ -135,7 +135,7 @@ public class BigFilesServiceImpl implements BigFilesService {
             }
             String mergeFilePath = getChunkFileFolderPath(fileMd5);
             // 将本地合并好的文件，上传到minio中，这里重载了一个方法
-            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath + extension);
+            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath + uploadFileParamsDto.getFilename());
             log.debug("合并文件上传至MinIO完成{}", mergeFile.getAbsolutePath());
             // 将文件信息写入数据库
             MediaFiles mediaFiles = mediaFileService.addFilesInfoToDb(companyId, uploadFileParamsDto, mergeFilePath, fileMd5, video_files);

@@ -31,7 +31,7 @@ public class CourseTeacherServiceImpl extends ServiceImpl<CourseTeacherMapper, C
 
     @Override
     public CourseTeacher saveCourseTeacher(CourseTeacher courseTeacher) {
-        if (courseTeacher.getCourseId() != null) {
+        if (courseTeacher.getId() != null) {
             boolean update = courseTeacherMapper.updateById(courseTeacher) <= 0;
             if (update) {
                 XueChengPlusException.cast("修改失败");

@@ -94,12 +94,13 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         mediaFiles.setBucket(bucket);
         mediaFiles.setFilePath(objectName);
         mediaFiles.setFileId(md5Id);
-        String contentType = ContentInfoUtil.findExtensionMatch(objectName).getMimeType();
+        String contentType = ContentInfoUtil.findExtensionMatch(uploadFileParamsDto.getFilename()).getMimeType();
         //todo 观察是否正确，扩展数据拿到的数据是否可以用于判断
         if (contentType.contains("mp4") || contentType.contains("image")) {
-            mediaFiles.setUrl("/" + bucket_files + "/" + objectName);
+            mediaFiles.setUrl("/" + bucket_files + "/" + objectName + uploadFileParamsDto.getFilename());
         }
         mediaFiles.setAuditStatus("002003");
+        //todo 解决文件已存在时插入异常
         boolean save = super.save(mediaFiles);
         if (!save) {
             throw new MediaException("保存文件信息失败！");

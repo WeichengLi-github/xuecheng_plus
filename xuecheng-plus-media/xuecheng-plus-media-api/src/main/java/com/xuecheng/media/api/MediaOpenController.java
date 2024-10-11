@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
-@RequestMapping("/open")
+//@RequestMapping("/open")
 public class MediaOpenController {
     @Autowired
     private MediaFileService mediaFileService;
