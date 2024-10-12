@@ -47,4 +47,11 @@ public interface MediaFileService extends IService<MediaFiles>{
   * @return 媒资文件url
   */
  MediaFiles getFileById(String mediaId);
+
+ /**
+  * 添加视频待处理任务表
+  * @param mediaFile 文件信息
+  * @param contentType 文件类型
+  */
+ void addWaitTask(MediaFiles mediaFile, String contentType);
 }

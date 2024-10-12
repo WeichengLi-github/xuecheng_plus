@@ -135,15 +135,17 @@ public class BigFilesServiceImpl implements BigFilesService {
             }
             String mergeFilePath = getChunkFileFolderPath(fileMd5);
             // 将本地合并好的文件，上传到minio中，这里重载了一个方法
-            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath + uploadFileParamsDto.getFilename());
+            //调用getChunkFileFolderPath获取的多了chunk目录
+            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath.substring(0,mergeFilePath.lastIndexOf("/")) + uploadFileParamsDto.getFilename());
             log.debug("合并文件上传至MinIO完成{}", mergeFile.getAbsolutePath());
             // 将文件信息写入数据库
-            MediaFiles mediaFiles = mediaFileService.addFilesInfoToDb(companyId, uploadFileParamsDto, mergeFilePath, fileMd5, video_files);
+            MediaFiles mediaFiles = mediaFileService.addFilesInfoToDb(companyId, uploadFileParamsDto, mergeFilePath.substring(0,mergeFilePath.lastIndexOf("/")), fileMd5, video_files);
             if (mediaFiles == null) {
                 XueChengPlusException.cast("媒资文件入库出错");
             }
             log.debug("媒资文件入库完成");
-
+            //清除分块文件
+            MinioUtil.deleteChunkFiles(mediaFiles.getBucket(), mergeFilePath + uploadFileParamsDto.getFilename(),chunkTotal);
             return RestResponse.success();
         } finally {
             for (File chunkFile : chunkFiles) {

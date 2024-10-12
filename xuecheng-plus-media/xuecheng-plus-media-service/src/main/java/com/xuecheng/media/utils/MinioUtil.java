@@ -90,13 +90,19 @@ public class MinioUtil {
             XueChengPlusException.cast("上传到文件系统出错");
         }
     }
-    //TODO 清理minio分块
-//    public static void deleteChunkFiles(String bucket,String objName,int chunkTotal) {
-//        Stream.iterate(0,i -> ++i).limit(chunkTotal).map()
-//        minioClient.removeObject(
-//                RemoveObjectArgs.builder()
-//                        .bucket(bucket)
-//                        .object(objName)
-//                        .build());
-//    }
+    public static void deleteChunkFiles(String bucket,String objName,int chunkTotal) {
+        Stream.iterate(0,i -> ++i).limit(chunkTotal).map(i -> {
+            try {
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket(bucket)
+                                .object(objName.concat(Integer.toString(i)))
+                                .build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return 1;
+        });
+
+    }
 }

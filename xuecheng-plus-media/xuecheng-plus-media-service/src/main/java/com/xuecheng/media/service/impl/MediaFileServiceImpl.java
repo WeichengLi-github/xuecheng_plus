@@ -8,6 +8,7 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.exception.MediaException;
 import com.xuecheng.media.mapper.MediaFilesMapper;
+import com.xuecheng.media.mapper.MediaProcessMapper;
 import com.xuecheng.media.model.convert.MediaConvert;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
@@ -39,6 +40,8 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
 
     @Autowired
     MediaFilesMapper mediaFilesMapper;
+    @Autowired
+    MediaProcessMapper mediaProcessMapper;
     @Autowired
     private MediaFileService currentProxy;
 
@@ -95,17 +98,31 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         mediaFiles.setFilePath(objectName);
         mediaFiles.setFileId(md5Id);
         String contentType = ContentInfoUtil.findExtensionMatch(uploadFileParamsDto.getFilename()).getMimeType();
-        //todo 观察是否正确，扩展数据拿到的数据是否可以用于判断
         if (contentType.contains("mp4") || contentType.contains("image")) {
             mediaFiles.setUrl("/" + bucket_files + "/" + objectName + uploadFileParamsDto.getFilename());
         }
         mediaFiles.setAuditStatus("002003");
-        //todo 解决文件已存在时插入异常
-        boolean save = super.save(mediaFiles);
+        boolean save = false;
+        try {
+            save = super.save(mediaFiles);
+        } catch (Exception e) {
+            log.error("文件信息入库失败，原因：{}",e);
+            MediaException.cast("文件保存失败");
+        }
+        currentProxy.addWaitTask(mediaFiles,contentType);
         if (!save) {
             throw new MediaException("保存文件信息失败！");
         }
         return mediaFiles;
+    }
+
+    public void addWaitTask(MediaFiles mediaFile, String contentType) {
+
+        //todo 适配其他视频类型
+        if (contentType.equals("video/x-msvideo") && mediaProcessMapper.insert(MediaConvert.INSTANCE.dtoToDto(mediaFile)) <= 0) {
+            MediaException.cast("保存avi视频到待处理表失败");
+        }
+
     }
 
     @Override
