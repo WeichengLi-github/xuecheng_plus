@@ -20,11 +20,13 @@ import com.xuecheng.media.utils.MinioUtil;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 /**
@@ -105,6 +107,8 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         boolean save = false;
         try {
             save = super.save(mediaFiles);
+        } catch (DuplicateKeyException e) {
+            MediaException.cast("文件已存在");
         } catch (Exception e) {
             log.error("文件信息入库失败，原因：{}",e);
             MediaException.cast("文件保存失败");

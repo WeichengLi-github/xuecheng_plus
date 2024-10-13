@@ -2,6 +2,9 @@ package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
+import com.xuecheng.media.model.dto.UploadFileResultDto;
+
+import java.io.File;
 
 public interface BigFilesService {
     /**
@@ -28,4 +31,6 @@ public interface BigFilesService {
      */
     RestResponse uploadChunk(String fileMd5,int chunk,byte[] bytes);
     RestResponse mergeChunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto);
+    File downloadFileFromMinio(File file, String bucket, String objectName);
+    String getChunkFileFolderPath(String fileMd5);
 }

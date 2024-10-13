@@ -1,4 +1,4 @@
-package com.xuecheng.base.utils;
+package com.xuecheng.base.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;

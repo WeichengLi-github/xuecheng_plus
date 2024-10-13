@@ -1,4 +1,4 @@
-package com.xuecheng.base.utils;
+package com.xuecheng.base.util;
 
 /**
  * Base64 工具类

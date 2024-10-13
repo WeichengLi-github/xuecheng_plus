@@ -5,10 +5,13 @@ import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.exception.MediaException;
 import com.xuecheng.media.mapper.MediaFilesMapper;
+import com.xuecheng.media.model.convert.MediaConvert;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
+import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.BigFilesService;
 import com.xuecheng.media.service.MediaFileService;
+import com.xuecheng.media.utils.FileUtil;
 import com.xuecheng.media.utils.MinioUtil;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -18,6 +21,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -46,7 +50,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         try {
             if (minioClient.getObject(GetObjectArgs.builder()
                     .bucket(mediaFiles.getBucket())
-                    .object(mediaFiles.getFilePath())
+                    .object(mediaFiles.getFilePath() + "/" + mediaFiles.getFilename())
                     .build()) == null) {
                 return RestResponse.success(false);
             }
@@ -90,6 +94,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
     //TODO 是否需要事务管理，或者是异步等
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public RestResponse mergeChunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto) {
         // 下载分块文件
         File[] chunkFiles = checkChunkStatus(fileMd5, chunkTotal);
@@ -136,16 +141,16 @@ public class BigFilesServiceImpl implements BigFilesService {
             String mergeFilePath = getChunkFileFolderPath(fileMd5);
             // 将本地合并好的文件，上传到minio中，这里重载了一个方法
             //调用getChunkFileFolderPath获取的多了chunk目录
-            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath.substring(0,mergeFilePath.lastIndexOf("/")) + uploadFileParamsDto.getFilename());
+            MinioUtil.uploadVideoFile(mergeFile.getAbsolutePath(), video_files, mergeFilePath.substring(0,37) + uploadFileParamsDto.getFilename());
             log.debug("合并文件上传至MinIO完成{}", mergeFile.getAbsolutePath());
             // 将文件信息写入数据库
-            MediaFiles mediaFiles = mediaFileService.addFilesInfoToDb(companyId, uploadFileParamsDto, mergeFilePath.substring(0,mergeFilePath.lastIndexOf("/")), fileMd5, video_files);
+            MediaFiles mediaFiles = mediaFileService.addFilesInfoToDb(companyId, uploadFileParamsDto, mergeFilePath.substring(0,37), fileMd5, video_files);
             if (mediaFiles == null) {
                 XueChengPlusException.cast("媒资文件入库出错");
             }
             log.debug("媒资文件入库完成");
             //清除分块文件
-            MinioUtil.deleteChunkFiles(mediaFiles.getBucket(), mergeFilePath + uploadFileParamsDto.getFilename(),chunkTotal);
+            MinioUtil.deleteChunkFiles(mediaFiles.getBucket(), mergeFilePath ,chunkTotal);
             return RestResponse.success();
         } finally {
             for (File chunkFile : chunkFiles) {
@@ -201,7 +206,7 @@ public class BigFilesServiceImpl implements BigFilesService {
      * @param objectName 桶内文件路径
      * @return
      */
-    private File downloadFileFromMinio(File file, String bucket, String objectName) {
+    public File downloadFileFromMinio(File file, String bucket, String objectName) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file);
              InputStream inputStream = minioClient.getObject(GetObjectArgs
                      .builder()
@@ -216,7 +221,8 @@ public class BigFilesServiceImpl implements BigFilesService {
         return null;
     }
 
-    private String getChunkFileFolderPath(String fileMd5) {
+    public String getChunkFileFolderPath(String fileMd5) {
         return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" + "chunk" + "/";
     }
+
 }

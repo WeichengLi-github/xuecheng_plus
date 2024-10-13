@@ -1,4 +1,4 @@
-package com.xuecheng.base.utils;
+package com.xuecheng.base.util;
 
 import org.apache.commons.codec.binary.Hex;
 

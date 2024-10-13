@@ -1,4 +1,4 @@
-package com.xuecheng.base.utils;
+package com.xuecheng.base.util;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayInputStream;
