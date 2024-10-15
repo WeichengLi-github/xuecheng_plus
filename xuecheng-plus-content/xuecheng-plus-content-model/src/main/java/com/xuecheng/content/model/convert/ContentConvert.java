@@ -2,9 +2,11 @@ package com.xuecheng.content.model.convert;
 
 
 import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.TeachplanMedia;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -23,5 +25,9 @@ public interface ContentConvert {
     CourseBase fromEditCourseDto(EditCourseDto editCourseDto);
     CourseMarket fromEditCourseDtoToCourseMarket(EditCourseDto editCourseDto);
     CourseMarket fromAddCourseDto(AddCourseDto addCourseDto);
+    @Mappings({
+            @Mapping(target = "mediaFilename",source = "fileName")
+    })
+    TeachplanMedia fromBindTeachplanMediaDto(BindTeachplanMediaDto bindTeachplanMediaDto);
 
 }

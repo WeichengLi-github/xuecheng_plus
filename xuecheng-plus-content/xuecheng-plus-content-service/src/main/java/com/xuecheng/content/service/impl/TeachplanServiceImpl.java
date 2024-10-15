@@ -1,11 +1,16 @@
 package com.xuecheng.content.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.util.SpringBeanUtil;
 import com.xuecheng.content.mapper.TeachplanMediaMapper;
+import com.xuecheng.content.model.convert.ContentConvert;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
 import com.xuecheng.content.mapper.TeachplanMapper;
+import com.xuecheng.content.model.po.TeachplanMedia;
+import com.xuecheng.content.service.TeachplanMediaService;
 import com.xuecheng.content.service.TeachplanService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -33,6 +40,8 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     private TeachplanMapper teachplanMapper;
     @Resource
     private TeachplanMediaMapper teachplanMediaMapper;
+    @Resource
+    private TeachplanMediaService teachplanMediaService;
     @Resource(name = "teachplanServiceImpl")
     private TeachplanService TEACHPLAN_SERVICE ;
 
@@ -93,5 +102,19 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
             teachplanMapper.updateById(tmp);
             teachplanMapper.updateById(teachplan);
         }
+    }
+
+    @Transactional
+    @Override
+    public void associationMedia(BindTeachplanMediaDto bindTeachplanMediaDto) {
+        Optional.ofNullable(teachplanMapper.selectById(bindTeachplanMediaDto.getTeachplanId()))
+                .filter(teachplan -> teachplan.getGrade() == 2)
+                .orElseThrow(() -> new XueChengPlusException("教学计划不存在或绑定媒资信息的不是小节"));
+        teachplanMediaService.saveOrUpdate(ContentConvert.INSTANCE.fromBindTeachplanMediaDto(bindTeachplanMediaDto),new LambdaQueryWrapper<TeachplanMedia>().eq(TeachplanMedia::getTeachplanId, bindTeachplanMediaDto.getTeachplanId()));
+    }
+    @Override
+    public void unassociationMedia(Long teachPlanId, Long mediaId) {
+        teachplanMediaMapper.delete(new LambdaQueryWrapper<TeachplanMedia>().eq(TeachplanMedia::getTeachplanId, teachPlanId)
+                .eq(TeachplanMedia::getMediaId, mediaId));
     }
 }
